@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
@@ -15,12 +17,24 @@ class AuthController extends Controller
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
+            'phone' => [
+                'required',
+                'string',
+                'regex:/^\+255[0-9]{9}$/',
+                'unique:users'
+            ],
+            'region' => [
+                'required',
+                new Enum(\App\Enums\Region::class)
+            ],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'phone' => $request->phone,
+            'region' => $request->region,
             'role' => 'user',
         ]);
 
@@ -29,6 +43,8 @@ class AuthController extends Controller
             'token' => $user->createToken('auth_token')->plainTextToken
         ]);
     }
+
+    
 
     public function login(Request $request)
     {
