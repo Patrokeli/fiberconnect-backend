@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Provider;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum');
-        $this->middleware('admin');
-    }
+
+   
 
     public function getProviders()
     {
@@ -22,7 +19,7 @@ class AdminController extends Controller
     public function addProvider(Request $request)
     {
         $request->validate(['name' => 'required|string']);
-        $provider = Provider::create($request->all());
+        $provider = Provider::create($request->only('name'));
         return response()->json($provider);
     }
 

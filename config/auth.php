@@ -36,11 +36,16 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
     ],
+    'admin' => [
+        'driver' => 'token',  // <-- change this
+        'provider' => 'admins',
+        'hash' => false,      // if you store plain tokens (true if hashed)
+    ],
+],
 
     /*
     |--------------------------------------------------------------------------
