@@ -1,4 +1,5 @@
 <?php
+// app/Http/Middleware/AdminMiddleware.php
 
 namespace App\Http\Middleware;
 
@@ -9,10 +10,10 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        if ($request->user() && $request->user()->role === 'admin') {
-            return $next($request);
+        if (!$request->user() || $request->user()->role !== 'admin') {
+            return response()->json(['message' => 'Forbidden. Admins only.'], 403);
         }
 
-        return response()->json(['message' => 'Unauthorized'], 403);
+        return $next($request);
     }
 }
