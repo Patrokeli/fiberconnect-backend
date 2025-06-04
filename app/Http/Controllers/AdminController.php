@@ -29,13 +29,16 @@ class AdminController extends Controller
     //create customer
      public function createCustomer(Request $request)
     {
-        $request->validate([
+       $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
-            'phone' => 'nullable|string',
-            'region' => 'nullable|string',
+            // Phone number must start with +255 followed by 9 digits (Tanzanian phone format)
+            'phone' => ['nullable', 'string', 'regex:/^\+255\d{9}$/'],
+            // Region must be one of the allowed values
+            'region' => ['nullable', 'string', 'in:Arusha,Dar es Salaam,Dodoma,Mwanza,Mbeya,Morogoro,Tanga,Kilimanjaro,Zanzibar,Other'],
         ]);
+
 
         $user = User::create([
             'name' => $request->name,
