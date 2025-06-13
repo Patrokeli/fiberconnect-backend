@@ -9,18 +9,89 @@ use Illuminate\Support\Facades\Hash;
 
 
 class AdminController extends Controller
-{
+{   
+
     public function getProviders()
     {
         return response()->json(Provider::all());
     }
 
-    public function addProvider(Request $request)
+    
+
+    public function getProviderById($id)
     {
-        $request->validate(['name' => 'required|string']);
-        $provider = Provider::create($request->only('name'));
+        $provider = Provider::find($id);
+        if (!$provider) {
+            return response()->json(['message' => 'Provider not found'], 404);
+        }
         return response()->json($provider);
     }
+
+    public function addProvider(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string',
+            'speeds' => 'nullable|array',
+            'prices' => 'nullable|array',
+            'installation' => 'nullable|string',
+            'coverage' => 'nullable|array',
+        ]);
+
+        $provider = Provider::create([
+            'name' => $data['name'],
+            'speeds' => $data['speeds'] ?? [],
+            'prices' => $data['prices'] ?? [],
+            'installation' => $data['installation'] ?? null,
+            'coverage' => $data['coverage'] ?? [],
+        ]);
+
+        return response()->json($provider, 201);
+    }
+
+
+
+    public function updateProvider(Request $request, $id)
+    {
+        $provider = Provider::find($id);
+        if (!$provider) {
+            return response()->json(['message' => 'Provider not found'], 404);
+        }
+
+        $data = $request->validate([
+            'name' => 'sometimes|string',
+            'speeds' => 'nullable|array',
+            'prices' => 'nullable|array',
+            'installation' => 'nullable|string',
+            'coverage' => 'nullable|array',
+        ]);
+
+        // Convert arrays to JSON if necessary
+        if (isset($data['speeds'])) {
+            $data['speeds'] = json_encode($data['speeds']);
+        }
+        if (isset($data['prices'])) {
+            $data['prices'] = json_encode($data['prices']);
+        }
+        if (isset($data['coverage'])) {
+            $data['coverage'] = json_encode($data['coverage']);
+        }
+
+        $provider->update($data);
+        return response()->json($provider);
+    }
+
+    public function deleteProvider($id)
+    {
+        $provider = Provider::find($id);
+        if (!$provider) {
+            return response()->json(['message' => 'Provider not found'], 404);
+        }
+
+        $provider->delete();
+        return response()->json(['message' => 'Provider deleted successfully']);
+    }
+
+
 
     public function getCustomers()
     {
