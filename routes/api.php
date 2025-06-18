@@ -12,8 +12,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
 
     Route::middleware('admin')->group(function () {
-        Route::get('/admin/providers', [AdminController::class, 'getProviders']);
-        Route::post('/admin/providers', [AdminController::class, 'addProvider']);
+        Route::prefix('/admin/providers')->group(function () {
+        Route::get('/', [AdminController::class, 'getProviders']);
+        Route::post('/', [AdminController::class, 'addProvider']);
+        Route::get('{id}', [AdminController::class, 'getProviderById']);
+        Route::put('{id}', [AdminController::class, 'updateProvider']);
+        Route::delete('{id}', [AdminController::class, 'deleteProvider']);
+    });
+
 
         Route::get('/admin/customers', [AdminController::class, 'getCustomers']);
         Route::post('/admin/customers', [AdminController::class, 'createCustomer']);
