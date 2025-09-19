@@ -13,10 +13,12 @@ class Provider extends Model
     ];
 
     protected $casts = [
-        'speeds' => 'array',
-        'prices' => 'array',
-        'coverage' => 'array',
-    ];
+    'speeds' => 'array',
+    'prices' => 'array',
+    'coverage' => 'array',
+    'rating' => 'float',
+];
+
 
 
 }
